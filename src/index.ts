@@ -5,7 +5,8 @@ import dbConnect from './db/dbconfig';
 import 'dotenv/config';
 
 
-import authRoutes from "./routes/authRoutes"
+import authRoutes from "./routes/authRoutes";
+import contactRoutes from "./routes/contactRoute"
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.get('/', (req: Request, res: Response) => {
 
 
 app.use('/auth', authRoutes);
+app.use('/api', contactRoutes);
 
 const PORT:string | number = process.env.PORT || 8000;
 app.listen(PORT, () => {
