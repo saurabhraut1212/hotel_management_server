@@ -10,7 +10,8 @@ import { registerValidationSchema, loginValidationSchema } from "../validations/
 const generateToken = (user: IUser) => {
 	const data = {
 		id: user._id,
-		email: user.email,
+        email: user.email,
+        role:user.role
 	};
 
 	const token: string = jwt.sign(data, process.env.JWT_SECRET as string, {

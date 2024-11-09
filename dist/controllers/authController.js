@@ -12,6 +12,7 @@ const generateToken = (user) => {
     const data = {
         id: user._id,
         email: user.email,
+        role: user.role
     };
     const token = jsonwebtoken_1.default.sign(data, process.env.JWT_SECRET, {
         expiresIn: "1d",

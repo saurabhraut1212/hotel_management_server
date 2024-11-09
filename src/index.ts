@@ -6,7 +6,8 @@ import 'dotenv/config';
 
 
 import authRoutes from "./routes/authRoutes";
-import contactRoutes from "./routes/contactRoute"
+import contactRoutes from "./routes/contactRoute";
+import orderRoutes from "./routes/orderRoutes"
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/auth', authRoutes);
 app.use('/api', contactRoutes);
+app.use('/order', orderRoutes);
 
 const PORT:string | number = process.env.PORT || 8000;
 app.listen(PORT, () => {

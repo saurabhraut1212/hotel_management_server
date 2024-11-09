@@ -1,47 +1,56 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendContactMessage = void 0;
-const contactModel_1 = require("../models/contactModel");
-const nodemailer_1 = __importDefault(require("nodemailer"));
-const dotenv_1 = __importDefault(require("dotenv"));
-const contactValidation_1 = require("../validations/contactValidation");
-dotenv_1.default.config();
-const adminEmail = process.env.ADMIN_EMAIL;
-const adminEmailPassword = process.env.ADMIN_EMAIL_PASSWORD;
-const sendContactMessage = async (req, res) => {
-    const { name, email, message } = req.body;
-    const { error } = contactValidation_1.contactValidationSchema.validate({ name, email, message });
+exports.createOrder = void 0;
+const orderModel_1 = require("../models/orderModel");
+const authModel_1 = require("../models/authModel");
+const orderValidations_1 = require("../validations/orderValidations");
+const createOrder = async (req, res) => {
+    const { items, totalPrice } = req.body;
+    const userId = req.user._id;
+    const { error } = orderValidations_1.orderValidationSchema.validate({ userId, items, totalPrice });
     if (error) {
         return res.status(400).json({ error: error.details[0].message });
     }
     try {
-        const contactMessage = new contactModel_1.ContactModel({ name, email, message });
-        await contactMessage.save();
-        const transporter = nodemailer_1.default.createTransport({
-            service: "gmail",
-            auth: {
-                user: adminEmail,
-                pass: adminEmailPassword,
-            },
-        });
-        const mailOptions = {
-            from: email,
-            to: adminEmail,
-            subject: "New Contact Us Message",
-            text: `You have received a new message from:
-      Name: ${name}
-      Email: ${email}
-      Message: ${message}`,
-        };
-        await transporter.sendMail(mailOptions);
-        res.status(200).json({ message: "Your message has been sent successfully!" });
+        const user = await authModel_1.AuthModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        const order = new orderModel_1.OrderModel({ userId, items, totalPrice });
+        await order.save();
+        user.orders?.push(order._id);
+        await user.save();
+        return res.status(201).json({ message: "Order created successfully", order });
     }
     catch (error) {
-        console.error("Error sending contact message:", error);
-        res.status(500).json({ error: "Failed to send message. Please try again later." });
+        console.error("Error creating order:", error);
+        return res.status(500).json({ error: "Failed to create order. Please try again later." });
     }
 };
-exports.sendContactMessage = sendContactMessage;
+exports.createOrder = createOrder;
+// export const getOrderById = async (req: Request, res: Response) => {
+//   const { id } = req.params;
+//   try {
+//     const order = await OrderModel.findById(id).populate("userId");
+//     if (!order) return res.status(404).json({ error: "Order not found" });
+//     res.json(order);
+//   } catch (error) {
+//     res.status(500).json({ error: "Error fetching order" });
+//   }
+// };
+// export const getUserOrders = async (req: Request, res: Response) => {
+//   const { userId } = req.params;
+//   try {
+//     const user = await UserModel.findById(userId).populate({
+//       path: "orders",
+//       model: "Order",
+//     });
+//     if (!user) {
+//       return res.status(404).json({ error: "User not found" });
+//     }
+//     res.json({ orders: user.orders });
+//   } catch (error) {
+//     console.error("Error fetching user's orders:", error);
+//     res.status(500).json({ error: "Failed to fetch user's orders." });
+//   }
+// };

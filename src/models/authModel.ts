@@ -1,8 +1,8 @@
-import mongoose, { Document, Schema, Model, PopulatedDoc } from "mongoose";
+import mongoose, { Document, Schema, Model, PopulatedDoc, Types } from "mongoose";
 
-//import { IOrder } from "./Order"; 
+import { IOrder } from "./orderModel";
 
-// User Interface
+
 interface IUser extends Document {
     _id: string;
     name: string;
@@ -11,7 +11,7 @@ interface IUser extends Document {
     phone: number;
     address: string;
     role: 'admin' | 'user';
-    orders?: PopulatedDoc< Document>[]; //add IOrder &
+    orders?: Types.Array<Types.ObjectId>;
     createdAt?: Date;
     updatedAt?: Date;
 }

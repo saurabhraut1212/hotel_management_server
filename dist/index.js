@@ -10,6 +10,7 @@ const dbconfig_1 = __importDefault(require("./db/dbconfig"));
 require("dotenv/config");
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const contactRoute_1 = __importDefault(require("./routes/contactRoute"));
+const orderRoutes_1 = __importDefault(require("./routes/orderRoutes"));
 const app = (0, express_1.default)();
 (0, dbconfig_1.default)();
 app.use(express_1.default.json());
@@ -20,6 +21,7 @@ app.get('/', (req, res) => {
 });
 app.use('/auth', authRoutes_1.default);
 app.use('/api', contactRoute_1.default);
+app.use('/order', orderRoutes_1.default);
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
     console.log(`Server started on PORT ${PORT}`);
