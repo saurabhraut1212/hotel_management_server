@@ -37,6 +37,7 @@ const OrderSchema = new mongoose_1.Schema({
         },
     ],
     totalPrice: { type: Number, required: true },
+    status: { type: String, enum: ["pending", "confirmed", "rejected"], default: "pending" },
     createdAt: { type: Date, default: Date.now },
 }, { timestamps: true });
 const OrderModel = mongoose_1.default.models.Order || mongoose_1.default.model("Order", OrderSchema);

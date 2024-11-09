@@ -12,6 +12,7 @@ interface IOrder extends Document {
   userId: mongoose.Types.ObjectId;
   items: IOrderItem[]; 
   totalPrice: number;
+  status: "pending" | "confirmed" | "rejected";
   createdAt: Date;
 }
 
@@ -27,6 +28,7 @@ const OrderSchema: Schema = new Schema(
       },
     ],
     totalPrice: { type: Number, required: true },
+    status: { type: String, enum: ["pending", "confirmed", "rejected"], default: "pending" },
     createdAt: { type: Date, default: Date.now },
   },
   { timestamps: true }
